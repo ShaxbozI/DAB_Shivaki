@@ -1,0 +1,233 @@
+# Model tanlanganda uning malumotlarini ko'rsatish
+@router.callback_query(lambda c: c.data.startswith('product_'))
+async def callback_product_info(callback_query: CallbackQuery):
+    product_name = callback_query.data.split("_", 1)[1]  # callback data'dan mahsulot nomini olish
+    product_data = product_info(product_name)
+    print(product_data)
+    if product_data:
+        # Surat URL'sini belgilash
+        photo1 = "https://bonnierpublications.com/app/uploads/2022/05/digitalfoto.jpg"
+        photo2 = "https://bonnierpublications.com/app/uploads/2022/05/digitalfoto.jpg"
+        photos = [photo1, photo2]
+            
+        # Tugmalarni yaratish
+        error_buttons = [
+            InlineKeyboardButton(text=f"{item}", callback_data=f'error_{item}')
+            for item in product_data['product_error']
+        ]
+        
+        # 5 tadan bo'lib chiqariladigan error tugmalari
+        error_rows = [error_buttons[i:i+5] for i in range(0, len(error_buttons), 5)]
+        
+        # Boshqa tugmalarni qo'shish
+        buttons = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(text="📘 Texnik malumot", url=product_data['book']),
+                    InlineKeyboardButton(text="📺 Videomalumotni ko'ring", url=product_data['video_link']),
+                ],
+                [
+                    InlineKeyboardButton(text="⚙️ Xatolik kodlari", callback_data=f'errors_{product_name}'),
+                ],
+                # *error_rows  # Guruhlangan error tugmalari
+            ]
+        )
+        
+        # Har bir suratni yuborish
+        for photo in photos:
+            await callback_query.message.answer_photo(photo)
+        # Xabarlar yuborish
+        await callback_query.message.answer(
+            f"Turi: <b>{product_data['product_type']}</b>\n"
+            f"Model: <b>{product_data['name']}</b>\n"
+            "Mahsulot haqida ko'proq bilib oling\n",
+            reply_markup=buttons,
+            parse_mode="HTML"  # HTML formatini qo'llash
+        )
+    else:
+        await callback_query.message.answer("Mahsulot haqida ma'lumot topilmadi.")
+
+
+
+
+elif page == 2 and item:
+        back_btn = back_button(page-1, item)
+        produkt_type = item.lower()
+        all_products = products()
+        # Filtrlangan mahsulotlar
+        filtered_products_not_subtype = [
+            product for product in all_products
+            if product.get('product_type', '').lower() == produkt_type and product['producing_now'] and not product['product_sub_type']
+        ]
+        
+        filtered_products_with_subtype = [
+            product for product in all_products
+            if product.get('product_type', '').lower() == produkt_type and product['producing_now'] and product['product_sub_type']
+        ]
+        
+        # Tugmalarni yaratish
+        if filtered_products_not_subtype:
+            products_kb = [
+                [InlineKeyboardButton(text=f"{product['name']}", callback_data=f"paginator_3_{product['name']}")]
+                for product in filtered_products_not_subtype
+            ]
+        
+        elif filtered_products_with_subtype:
+            products_kb = [
+                [InlineKeyboardButton(text=f"{product['name']}", callback_data=f"paginator_3_{product['name']}")]
+                for product in filtered_products_with_subtype
+            ]
+        
+        else:
+            products_kb = []
+
+        if back_btn:
+            products_kb.append([back_btn])
+            
+        products_kb.append([asosiy])
+        
+        return InlineKeyboardMarkup(inline_keyboard=products_kb)
+
+
+
+
+
+
+
+from django.contrib import admin
+
+from dab_admin.forms import QrCodeForm
+from .models import Bot_Users, Type_Protucts, Type_Errors, Products, SubType_Protucts, Manual_info, Qr_code
+
+
+# Bot_Users adminini yaratish
+class Bot_UsersAdmin(admin.ModelAdmin):
+    list_display = ('name', 'username', 'user_id', 'is_active', 'admin')  # Ko'rsatiladigan maydonlar
+    list_filter = ('is_active', 'admin',)  # Filtrlar ro'yxatiga 'is_active' ni qo'shish
+    search_fields = ('name', 'username',)  # Qidiruv imkoniyatlari
+    ordering = ('-create_at',)  # Avtomatik saralash (yangilanish bo'yicha)
+
+# Modelni admin paneliga ro'yxatdan o'tkazish
+admin.site.register(Bot_Users, Bot_UsersAdmin)
+
+
+class ProductsAdmin(admin.ModelAdmin):
+    list_display = ('name', 'product_type', 'product_sub_type', 'producing_now')  # Ko'rsatiladigan maydonlar
+    list_filter = ('producing_now',)  # Filtrlar ro'yxatiga 'is_active' ni qo'shish
+    search_fields = ('name', 'product_type')  # Qidiruv imkoniyatlari
+    ordering = ('-create_at',)  # Avtomatik saralash (yangilanish bo'yicha)
+
+# Modelni admin paneliga ro'yxatdan o'tkazish
+admin.site.register(Products, ProductsAdmin)
+
+# @admin.register(Qr_code)
+# class QrCodeAdmin(admin.ModelAdmin):
+#     form = QrCodeForm
+    
+admin.site.register(Type_Protucts)
+admin.site.register(Type_Errors)
+admin.site.register(SubType_Protucts)
+admin.site.register(Manual_info)
+# admin.site.register(Qr_code)
+
+from django.contrib import admin
+from .models import Qr_code
+
+class QrCodeAdmin(admin.ModelAdmin): 
+    # Faqat qo'shishda ko'rinadigan maydonlar
+    fields = ['link_name', 'qr_file']
+    
+    def has_change_permission(self, request, obj=None):
+        """
+        Admin interfeysda obyektni yangilash imkoniyatini o'chirish.
+        """
+        return False  # Yangilashni taqiqlash
+
+    def has_add_permission(self, request):
+        """
+        Qo'shish imkoniyatini saqlab qolish.
+        """
+        return True  # Qo'shishga ruxsat berish
+
+    def has_delete_permission(self, request, obj=None):
+        """
+        O'chirish imkoniyatini boshqarish (kerak bo'lsa).
+        """
+        return True  # O'chirishga ruxsat berish
+
+    def get_readonly_fields(self, request, obj=None):
+        # Agar ob'ekt mavjud bo'lsa (tahrirlash yoki ko'rish), qo'shimcha maydonlarni ko'rsatamiz
+        if obj:
+            return ['link_name', 'qr_file', 'slug', 'qr_code_link', 'qr_code', 'create_at']
+        # Yangi ob'ekt qo'shishda hech bir maydonni readonly qilmaymiz
+        return []
+
+    def get_fields(self, request, obj=None):
+        # Agar ob'ekt mavjud bo'lsa, barcha maydonlarni ko'rsatamiz
+        if obj:
+            return ['link_name', 'qr_file', 'slug', 'qr_code_link', 'qr_code', 'create_at']
+        # Aks holda, faqat kerakli maydonlarni ko'rsatamiz
+        return ['link_name', 'qr_file']
+
+# Admin interfeysga ro'yxatdan o'tkazish
+admin.site.register(Qr_code, QrCodeAdmin)
+
+
+
+
+
+
+
+
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
+
+class CustomUserAdmin(UserAdmin):
+    # Admin panelda ko'rsatiladigan maydonlar
+    list_display = ('username', 'email', 'is_staff', 'is_active')
+    list_filter = ('is_active', 'is_staff')
+    search_fields = ('username', 'email')
+    ordering = ('-date_joined',)
+
+    def has_change_permission(self, request, obj=None):
+        """
+        Faqat superuser yoki faol statusdagi admin foydalanuvchilar o'zgartirish imkoniyatiga ega.
+        """
+        if request.user.is_superuser:
+            return True
+        return request.user.is_staff and request.user.is_active
+
+# Django User modelini qayta ro'yxatdan o'tkazish
+admin.site.unregister(User)
+admin.site.register(User, CustomUserAdmin)
+
+
+
+
+"""____________________Inlayn tugmalarni sahifalash____________________"""
+
+def paginate_buttons(data_list, type, page: int, per_page: int = 3):
+    total_pages = ceil(len(data_list) / per_page)
+    start = page * per_page
+    end = start + per_page
+    current_page_data = data_list[start:end]
+
+    # Asosiy tugmalar
+    buttons = [[InlineKeyboardButton(text=item, callback_data=f"{type}_{item}")] for item in current_page_data]
+
+    # Navigatsiya tugmalari
+    navigation_buttons = []
+    if page > 0:
+        navigation_buttons.append(InlineKeyboardButton(text="⬅️ Oldingi", callback_data=f"page_{page - 1}"))
+    
+    # Sahifalar soni va hozirgi sahifa
+    navigation_buttons.append(InlineKeyboardButton(text=f"{page + 1}/{total_pages}", callback_data="current_page"))
+    
+    if end < len(data_list):
+        navigation_buttons.append(InlineKeyboardButton(text="Keyingi ➡️", callback_data=f"page_{page + 1}"))
+
+    # Navigatsiya tugmalarini qo‘shish
+    if navigation_buttons:
+        buttons.append(navigation_buttons)
+
+    return InlineKeyboardMarkup(inline_keyboard=buttons)

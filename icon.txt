@@ -1,0 +1,63 @@
+404 Not Found (Resurs Topilmadi)
+
+🔍 Magnifying Glass
+📄 Empty Document
+❌ Red Cross
+500 Internal Server Error (Server Xatosi)
+
+⚙️ Settings Gear with Cross
+🖥️ Computer Screen with Error
+🔧 Wrench Icon
+403 Forbidden (Ruxsat Yo'q)
+
+🚫 No Entry Sign
+🔒 Lock Icon
+400 Bad Request (Noto‘g‘ri So‘rov)
+
+❓ Question Mark
+📛 Error Badge
+Timeout or Connection Issue (Aloqa Xatosi)
+
+⏳ Hourglass
+🌐 Disconnected Globe
+Validation Error (Ma’lumot Noto‘g‘ri)
+
+🛑 Stop Sign
+⚠️ Warning Triangle
+Database Error (Bazaga Ulana Olmadi)
+
+🗄️ File Cabinet
+📊 Broken Chart
+Authentication Error (Autentifikatsiya Muvaffaqiyatsiz)
+
+🔑 Key with Cross
+🛡️ Shield with Error
+
+🔙 (Back Arrow)
+
+Ma'nosi: Qaytish, orqaga.
+"Asosiyga qaytish" uchun mos va intuitiv.
+🏠 (House)
+
+Ma'nosi: Uy.
+Asosiy sahifaga qaytishni bildiradi.
+🖱️ (Mouse Pointer)
+
+Ma'nosi: Tanlash.
+Tugma funksiyasini ifodalash uchun ishlatilishi mumkin.
+◀️ (Left Arrow)
+
+Ma'nosi: Chapga qaytish.
+Tugma ichida "qaytish" ma'nosini sezdiradi.
+🔄 (Counterclockwise Arrows)
+
+Ma'nosi: Yangilash yoki qayta boshlash.
+
+📂 (Folder) — Arxiv papkasi.
+🗂️ (Card Index Dividers) — Tartiblangan ma'lumotlar uchun.
+🗄️ (File Cabinet) — Fayllar saqlash shkafi.
+🗃️ (Card File Box) — Kartochka fayllar qutisi.
+📦 (Package) — Qutilar yoki saqlangan mahsulotlarni ifodalash uchun.
+
+Foto uchun: 📷🖼️📸
+Kitob uchun: 📚📖📕
