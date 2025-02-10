@@ -1100,9 +1100,13 @@ async def handle_message(message: Message):
 
         # Xatolik kodini tekshirish
         try:
-            if search_error_info(code):
-                error = search_error_info(code)
-                await message.reply(f"❗ Kod: {error}\n")
+            error_list = search_error_info(code)
+            if error_list:
+                for item in error_list:
+                    if item.get('photo_id'):
+                        await message.answer_photo(item['photo_id'])
+                    else:
+                        continue
             else:
                 await message.reply(
                     "⚠️ Xato kodini izlash uchun uni tekshirib to‘g‘ri ko‘rinishda yuboring.\n\n"
